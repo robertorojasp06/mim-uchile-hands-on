@@ -7,6 +7,7 @@ and writes to data/holter/:
 - windows.npz        4-s ECG windows (channel 1, mV, float16) centred on N/S/V beats, for 4B
 - features.parquet   hand-crafted beat features for 4C/4-s1:
                      train/val records -> sampled beats; test records -> every beat (24 h)
+- pacientes.npz      per-patient histogram of out-of-fold beat scores (all 24 records), for 5-s1
 
 The ISHNE header (patient name, ID, birth date) is never copied: the signal is read with the
 same convention used to align the annotations (from byte 0), and every sample that overlaps
@@ -113,6 +114,34 @@ def sample_per_class(df, cap, rng):
     return pd.concat(parts).sort_values("sample_index")
 
 
+def patient_scores(all_nsv, records, out):
+    """Out-of-fold random forest score for every N/S/V beat (6 folds by patient, 2 normal + 2 abnormal
+    each), summarised per patient as a histogram so any aggregation rule can be evaluated."""
+    rng = np.random.default_rng(SEED + 1)
+    by_group = {g: list(rng.permutation(records.loc[records.grupo == g, "record"])) for g in ("normal", "anormal")}
+    folds = [by_group["normal"][2 * i:2 * i + 2] + by_group["anormal"][2 * i:2 * i + 2] for i in range(6)]
+    score = np.empty(len(all_nsv), np.float32)
+    for fold in folds:
+        test = all_nsv.record.isin(fold).to_numpy()
+        fit = pd.concat([sample_per_class(g, CAP_FEATURES, rng) for _, g in all_nsv[~test].groupby("record")])
+        rf = RandomForestClassifier(n_estimators=100, min_samples_leaf=5, class_weight="balanced",
+                                    n_jobs=-1, random_state=SEED).fit(fit[FEATURES], fit.code.isin(["S", "V"]))
+        score[test] = rf.predict_proba(all_nsv.loc[test, FEATURES])[:, 1]
+    bins = np.linspace(0, 1, 101)
+    rec = records.set_index("record")
+    ids = sorted(all_nsv.record.unique())
+    hist, smax, smean, n, n_ect = [], [], [], [], []
+    for r in ids:
+        m = (all_nsv.record == r).to_numpy()
+        hist.append(np.histogram(score[m], bins=bins)[0])
+        smax.append(score[m].max()); smean.append(score[m].mean())
+        n.append(m.sum()); n_ect.append(int(all_nsv.code[m].isin(["S", "V"]).sum()))
+    np.savez_compressed(out / "pacientes.npz", record=np.array(ids, dtype="U3"),
+                        grupo=rec.loc[ids, "grupo"].to_numpy().astype("U7"), horas=rec.loc[ids, "horas"].to_numpy(),
+                        n_latidos=np.array(n), n_ectopicos=np.array(n_ect), hist=np.stack(hist), bins=bins,
+                        score_max=np.array(smax), score_medio=np.array(smean))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--src", type=Path, default=SRC)
@@ -128,7 +157,7 @@ def main():
     pd.DataFrame({"original": list(new_id), "id": list(new_id.values())}).to_csv(
         REPO / "prep" / "private" / "holter_id_map.csv", index=False)
 
-    rows, win_x, win_y, win_rec, feats = [], [], [], [], []
+    rows, win_x, win_y, win_rec, feats, all_nsv = [], [], [], [], [], []
     for rec in sorted(RECORDS, key=new_id.get):
         group, split = RECORDS[rec]
         rid = new_id[rec]
@@ -152,6 +181,7 @@ def main():
         f.insert(0, "record", rid)
 
         nsv = f[f.code.isin(["N", "S", "V"])].dropna(subset=FEATURES)
+        all_nsv.append(nsv)
         keep = nsv if split == "test" else sample_per_class(nsv, CAP_FEATURES, rng)
         feats.append(keep)
 
@@ -185,6 +215,7 @@ def main():
 
     np.savez_compressed(args.out / "windows.npz", x=np.concatenate(win_x),
                         y=np.concatenate(win_y).astype("U1"), record=np.concatenate(win_rec).astype("U3"), fs=128, pre=WIN_PRE)
+    patient_scores(pd.concat(all_nsv, ignore_index=True), records, args.out)
     print("features:", feats.groupby(["split", "code"]).size().to_dict())
     print("windows:", sum(len(v) for v in win_y))
 

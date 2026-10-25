@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-DATASETS = ["holter", "wsi", "ct"]
+DATASETS = ["holter", "wsi", "ct", "medsam", "lamina", "ajuste", "galeria"]
 
 
 def main():
