@@ -4,18 +4,18 @@ Actividades prácticas en Google Colab para las **Sesiones 4 y 5** del programa 
 "Clases 1 y 3 — Deep learning para apoyo diagnóstico"). Todas corren **solo con CPU**, son en español y usan **datos locales anonimizados** (todos los estudiantes
 usan exactamente el mismo conjunto en cada actividad).
 
-| Actividad | Notebook | Duración | Cómputo | Datos | Diapositivas relacionadas |
-|---|---|---|---|---|---|
-| **4A** · U-Net preentrenada en patología digital | [`S4A_unet_patologia.ipynb`](notebooks/S4A_unet_patologia.ipynb) | 25 min | CPU (~1 min de inferencia) | `wsi` | 17–18, 25, 31, 37 |
-| **4B** · Entrena una CNN 1D con latidos de Holter | [`S4B_cnn1d_ecg.ipynb`](notebooks/S4B_cnn1d_ecg.ipynb) | 25–30 min | CPU (~20–60 s por entrenamiento) | `holter` | 20, 24–27, 34–36 |
-| **4C** · El umbral es una decisión clínica | [`S4C_umbral_holter.ipynb`](notebooks/S4C_umbral_holter.ipynb) | 20 min | CPU | `holter` | 8–13, 37–38 |
-| **4-s1** · La trampa del *accuracy* | [`S4s1_trampa_accuracy.ipynb`](notebooks/S4s1_trampa_accuracy.ipynb) | 10 min | CPU | `holter` | 37 |
-| **4-s2** · Dice, IoU y Hausdorff entre dos expertos | [`S4s2_metricas_segmentacion.ipynb`](notebooks/S4s2_metricas_segmentacion.ipynb) | 10 min | CPU | `ct` | 34, 37 |
-| **5A** · MedSAM con un humano en el ciclo | [`S5A_medsam_hitl.ipynb`](notebooks/S5A_medsam_hitl.ipynb) | 25–30 min | CPU (~0,3 s por corte) | `medsam` | 40–44, 46 |
-| **5B** · *Pipeline* de una lámina completa (WSI) | [`S5B_pipeline_wsi.ipynb`](notebooks/S5B_pipeline_wsi.ipynb) | 25 min | CPU (~1 min en el Paso 4) | `lamina` | 31 |
-| **5C** · Ajuste fino a datos locales | [`S5C_ajuste_fino.ipynb`](notebooks/S5C_ajuste_fino.ipynb) | 25 min | CPU (~15 s–2 min por entrenamiento) | `ajuste` | 27, 40, 43–44 |
-| **5-s1** · De latidos a paciente (y de parches a lámina) | [`S5s1_latidos_a_paciente.ipynb`](notebooks/S5s1_latidos_a_paciente.ipynb) | 10 min | CPU | `holter` | 31, 37 |
-| **5-s2** · Galería de errores de nnU-Net | [`S5s2_galeria_errores.ipynb`](notebooks/S5s2_galeria_errores.ipynb) | 10 min | CPU | `galeria` | 37–38 |
+| Actividad | Abrir | Notebook | Duración | Cómputo | Datos | Diapositivas relacionadas |
+|---|---|---|---|---|---|---|
+| **4A** · U-Net preentrenada en patología digital | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4A_unet_patologia.ipynb) | [`S4A_unet_patologia.ipynb`](notebooks/S4A_unet_patologia.ipynb) | 25 min | CPU (~1 min de inferencia) | `wsi` | 17–18, 25, 31, 37 |
+| **4B** · Entrena una CNN 1D con latidos de Holter | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4B_cnn1d_ecg.ipynb) | [`S4B_cnn1d_ecg.ipynb`](notebooks/S4B_cnn1d_ecg.ipynb) | 25–30 min | CPU (~20–60 s por entrenamiento) | `holter` | 20, 24–27, 34–36 |
+| **4C** · El umbral es una decisión clínica | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4C_umbral_holter.ipynb) | [`S4C_umbral_holter.ipynb`](notebooks/S4C_umbral_holter.ipynb) | 20 min | CPU | `holter` | 8–13, 37–38 |
+| **4-s1** · La trampa del *accuracy* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4s1_trampa_accuracy.ipynb) | [`S4s1_trampa_accuracy.ipynb`](notebooks/S4s1_trampa_accuracy.ipynb) | 10 min | CPU | `holter` | 37 |
+| **4-s2** · Dice, IoU y Hausdorff entre dos expertos | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4s2_metricas_segmentacion.ipynb) | [`S4s2_metricas_segmentacion.ipynb`](notebooks/S4s2_metricas_segmentacion.ipynb) | 10 min | CPU | `ct` | 34, 37 |
+| **5A** · MedSAM con un humano en el ciclo | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S5A_medsam_hitl.ipynb) | [`S5A_medsam_hitl.ipynb`](notebooks/S5A_medsam_hitl.ipynb) | 25–30 min | CPU (~0,3 s por corte) | `medsam` | 40–44, 46 |
+| **5B** · *Pipeline* de una lámina completa (WSI) | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S5B_pipeline_wsi.ipynb) | [`S5B_pipeline_wsi.ipynb`](notebooks/S5B_pipeline_wsi.ipynb) | 25 min | CPU (~1 min en el Paso 4) | `lamina` | 31 |
+| **5C** · Ajuste fino a datos locales | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S5C_ajuste_fino.ipynb) | [`S5C_ajuste_fino.ipynb`](notebooks/S5C_ajuste_fino.ipynb) | 25 min | CPU (~15 s–2 min por entrenamiento) | `ajuste` | 27, 40, 43–44 |
+| **5-s1** · De latidos a paciente (y de parches a lámina) | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S5s1_latidos_a_paciente.ipynb) | [`S5s1_latidos_a_paciente.ipynb`](notebooks/S5s1_latidos_a_paciente.ipynb) | 10 min | CPU | `holter` | 31, 37 |
+| **5-s2** · Galería de errores de nnU-Net | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S5s2_galeria_errores.ipynb) | [`S5s2_galeria_errores.ipynb`](notebooks/S5s2_galeria_errores.ipynb) | 10 min | CPU | `galeria` | 37–38 |
 
 Cada notebook tiene la misma estructura: tabla de pasos con tiempos, celdas con formularios de Colab
 (el código queda oculto, pero se puede abrir), gráficos interactivos y celdas **✍️ Decisión / Pregunta**
@@ -32,29 +32,37 @@ donde el estudiante escribe su elección usando la terminología técnica.
    `CLAVE_DATOS` de la primera celda. Con la clave vacía o incorrecta, la celda avisa en español.
    Para actualizar los datos: regenerar los zips (`python prep/package_data.py`) y reemplazar los archivos en
    la carpeta de sasiba **con el mismo nombre**; el enlace y la clave no cambian.
-3. **Abrir en Colab.** El repositorio es **privado**, así que el enlace directo
-   `https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/<notebook>.ipynb`
-   solo funciona para cuentas con acceso al repositorio (ver [Probar una actividad](#probar-una-actividad-equipo-docente)).
-   ⚠️ **Pendiente para los estudiantes:** hacer público el repositorio (no contiene datos ni la clave) o
-   compartirles los `.ipynb` por otra vía (p. ej., una carpeta de Google Drive).
-   Los estudiantes deben usar **Archivo → Guardar una copia en Drive** para escribir sus respuestas.
+3. **Abrir en Colab.** El repositorio es **público**: cada notebook se abre con el botón *Open in Colab* de la
+   tabla de arriba, o con `https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/<notebook>.ipynb`.
+   Basta una **cuenta de Google**; no se necesita cuenta de GitHub. El repositorio no contiene datos ni la clave.
+   Los enlaces muestran siempre la versión más reciente de `main`.
 
 Ninguna actividad instala paquetes: usan lo que ya trae Colab (numpy, pandas, pyarrow, scipy, scikit-learn,
 scikit-image, PyTorch, matplotlib, ipywidgets, Pillow).
 
+## Instrucciones para los estudiantes
+
+Texto listo para copiar en U-Cursos, el chat de la clase o una diapositiva (cambiar el enlace según la actividad):
+
+> 1. Abre el enlace de la actividad (por ejemplo, la actividad 4A:
+>    <https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4A_unet_patologia.ipynb>)
+>    e inicia sesión con tu cuenta de Google.
+> 2. Haz clic en **Archivo → Guardar una copia en Drive**. Trabaja siempre en esa copia: ahí quedan tus respuestas.
+> 3. En la primera celda (⚙️ *Preparar el entorno*), escribe la **clave de los datos** que entregamos en clase en
+>    el campo `CLAVE_DATOS`.
+> 4. Ejecuta las celdas **en orden**, de arriba hacia abajo (▶ a la izquierda de cada celda, o Mayús + Enter).
+>    Si Colab avisa que el notebook no fue creado por Google, elige **Ejecutar de todos modos**.
+> 5. Responde en las celdas ✍️ (doble clic para editar).
+
+No se necesita GPU: si Colab ofrece una, no hace falta cambiar el tipo de entorno.
+
 ## Probar una actividad (equipo docente)
 
-En Colab, con una cuenta de Google y acceso de lectura al repositorio en GitHub:
-
-1. Abrir <https://colab.research.google.com> → **Archivo → Abrir cuaderno** → pestaña **GitHub**.
-   Marcar **Incluir repositorios privados** y autorizar a Colab en GitHub (solo la primera vez).
-2. Buscar `robertorojasp06/mim-uchile-hands-on`, rama `main`, y elegir el notebook (p. ej.
-   `notebooks/S4A_unet_patologia.ipynb`).
-3. **Archivo → Guardar una copia en Drive** (así se puede escribir en las celdas ✍️ y se conservan los cambios).
-4. Dejar el entorno en CPU: **Entorno de ejecución → Cambiar tipo de entorno → CPU**.
-5. En la primera celda (⚙️ *Preparar el entorno*), escribir la clave de los datos en `CLAVE_DATOS` y ejecutarla.
-6. Ejecutar las celdas **en orden** (▶ o Mayús + Enter) y comparar con la
-   [guía para docentes](#guía-para-docentes-qué-deberían-encontrar).
+1. Abrir el notebook con su botón *Open in Colab* (tabla de arriba).
+2. **Archivo → Guardar una copia en Drive**.
+3. Usar CPU, como los estudiantes: **Entorno de ejecución → Cambiar tipo de entorno de ejecución → CPU**.
+4. Escribir la clave en `CLAVE_DATOS` (primera celda) y ejecutar las celdas **en orden**.
+5. Comparar con la [guía para docentes](#guía-para-docentes-qué-deberían-encontrar).
 
 Prueba rápida sin Colab (en un computador con los datos en `data/`):
 
