@@ -23,14 +23,15 @@ donde el estudiante escribe su elección usando la terminología técnica.
 
 ## Puesta en marcha (equipo docente)
 
-1. **Publicar los datos.** Subir los `dist/*.zip` (7 archivos, ~190 MB) a un lugar desde el que
-   Colab pueda descargarlos con una URL directa del tipo `<DATA_URL>/<nombre>.zip`
-   (por ejemplo, los *assets* de un *release* de GitHub, o un servidor web del laboratorio).
-   ⚠️ Son datos clínicos **anonimizados**: elegir el lugar según lo que permitan el comité de ética y los
-   convenios con HCUCH e ITMed. Un enlace "compartido" de Google Drive no sirve tal cual (no es una URL directa).
-2. **Pegar la URL** en la constante `DATA_URL` de [`notebooks/src/_setup.py`](notebooks/src/_setup.py) y
-   regenerar los notebooks (`python prep/build_notebooks.py`), o entregarla a los estudiantes para que la
-   peguen en la primera celda.
+1. **Datos (ya publicados).** Los `dist/*.zip` (7 archivos, ~190 MB) están en una carpeta de **sasiba**
+   (ownCloud de la U. de Chile) compartida con un enlace público **protegido con clave**:
+   `https://sasiba.uchile.cl/index.php/s/MC5VkrEeFNEZV30`. El enlace ya está en `DATA_URL`
+   ([`notebooks/src/_setup.py`](notebooks/src/_setup.py)). Los notebooks descargan cada zip por WebDAV
+   (`/public.php/webdav/<nombre>.zip`, usuario = código del enlace, contraseña = clave).
+2. **La clave no se guarda en el repositorio.** Se entrega en clase y cada estudiante la escribe en el campo
+   `CLAVE_DATOS` de la primera celda. Con la clave vacía o incorrecta, la celda avisa en español.
+   Para actualizar los datos: regenerar los zips (`python prep/package_data.py`) y reemplazar los archivos en
+   la carpeta de sasiba **con el mismo nombre**; el enlace y la clave no cambian.
 3. **Abrir en Colab.** Si el repositorio está en GitHub:
    `https://colab.research.google.com/github/<usuario>/<repo>/blob/main/notebooks/<notebook>.ipynb`.
    Los estudiantes deben usar **Archivo → Guardar una copia en Drive** para escribir sus respuestas.
