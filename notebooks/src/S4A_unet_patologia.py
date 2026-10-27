@@ -164,6 +164,17 @@ w.interact(galeria,
 
 # %% [markdown]
 # ## Paso 2 · La U-Net en un parche
+# La U-Net tiene forma de **U**. El **codificador** (bajada) aplica convoluciones y reduce la imagen a la mitad
+# en cada nivel: pierde detalle espacial, pero cada píxel "ve" una zona más grande y reconoce **qué** hay. El
+# **decodificador** (subida) vuelve a agrandar la imagen hasta 300 × 300. Las **conexiones de salto** copian los
+# mapas del codificador al decodificador para recuperar **dónde** está cada cosa, con bordes nítidos.
+#
+# ![Arquitectura de la U-Net de este notebook](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4A_unet300.png)
+#
+# Esta es una U-Net **reducida**, pensada para correr rápido. La
+# [U-Net original](https://arxiv.org/abs/1505.04597) (Ronneberger et al., 2015) tiene 4 niveles de bajada,
+# dos convoluciones por nivel, de 64 a 1.024 canales y ~31 millones de parámetros: unas 280 veces más.
+#
 # La última capa de la red entrega, para cada píxel, **3 números** (*logits*), uno por clase. La función
 # **softmax** los convierte en probabilidades:
 #
