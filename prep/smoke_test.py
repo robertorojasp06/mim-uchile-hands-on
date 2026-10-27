@@ -6,7 +6,7 @@ Uses data/ if present (run from notebooks/), otherwise downloads from sasiba and
 password in the environment variable CLAVE_DATOS.
 
 Usage (from notebooks/):
-    python ../prep/smoke_test.py src/S4A_unet_patologia.py [OUT_DIR] ["{'con_umbral': [{'umbral': 0.2}]}"]
+    python ../prep/smoke_test.py src/S4A_unet_patologia.py [OUT_DIR] ["{'inferencia': [{'fila': 20, 'columna': 280}]}"]
 """
 import os
 import re

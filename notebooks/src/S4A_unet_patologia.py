@@ -24,9 +24,8 @@
 # |---|---|---|
 # | 1 | Exploras los parches y sus anotaciones | 3 min |
 # | 2 | Corres la U-Net en un parche y lees sus probabilidades | 5 min |
-# | 3 | Decides a qué aumento trabajar | 6 min |
-# | 4 | Pruebas el modelo en otro órgano (validación externa) | 5 min |
-# | 5 | Eliges el umbral de artefacto | 5 min |
+# | 3 | Decides a qué aumento trabajar | 10 min |
+# | 4 | Pruebas el modelo en otro órgano (validación externa) | 6 min |
 
 # %%
 # INCLUDE: _setup.py
@@ -282,8 +281,8 @@ for aum in AUMENTOS:
     for c in (1, 2):
         filas.append({"aumento": aum, "clase": CLASES[c], "Dice agrupado": dice(pred, ref, c),
                       "Dice promedio por parche": np.nanmean([dice(pred[i], ref[i], c) for i in range(len(ref))])})
-    for region, g in sub.groupby("region"):
-        c = {"tejido": 1, "artefacto": 2, "fondo": 0}[g.categoria.iloc[0]]
+    for region, g in sub[sub.categoria != "fondo"].groupby("region"):
+        c = {"tejido": 1, "artefacto": 2}[g.categoria.iloc[0]]
         por_region.append({"categoría": g.categoria.iloc[0], "región": region, "aumento": aum,
                            "Dice": dice(pred[g.index], ref[g.index], c)})
 
@@ -313,6 +312,18 @@ for aum, um in UM_POR_PIXEL.items():
 display(pd.DataFrame(filas).style.format({"parches de 300 px": "{:,}", "minutos en esta CPU": "{:.1f}"}).hide(axis="index"))
 
 # %% [markdown]
+# **3d.** Así se ve una lámina completa segmentada: la misma lámina de colon de la introducción, recorrida
+# parche a parche por la U-Net de 10x y vuelta a armar.
+#
+# ![Lámina completa de colon segmentada en fondo, tejido y artefacto](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4A_lamina_segmentada.jpg)
+#
+# Fíjate en tres cosas:
+# - Los cortes de tejido salen limpios, y el borde del portaobjetos y la sombra del extremo derecho salen como artefacto.
+# - En las burbujas de aire bajo el cubreobjetos (zoom c–d) la red **duda**: mezcla píxeles de tejido y de
+#   artefacto en un patrón granulado. Es la misma baja confianza que viste en el Paso 2, ahora a escala de lámina.
+# - Para esta lámina se usaron 15.225 parches y ~20 min de CPU a 10x (en el computador del laboratorio).
+#   A 40x serían 16 veces más.
+#
 # ### ✍️ Decisión 1
 # 1. ¿Mejora la segmentación de tejido y artefacto al subir el aumento? ¿Compensa multiplicar el costo por 16?
 # 2. ¿Por qué el Dice **promedio por parche** es más bajo que el **agrupado**? ¿Cuál reportarías?
@@ -354,51 +365,7 @@ display(tabla.style.background_gradient(subset=["diferencia"], cmap="RdYlGn", vm
 #
 # _Respuesta:_
 #
-# ## Paso 5 · El umbral de artefacto
-# En vez de elegir la clase más probable, marcamos un píxel como **artefacto** si P(artefacto) ≥ umbral.
-# - Umbral **bajo** → se descarta más: menos artefactos colados, pero se pierde tejido útil.
-# - Umbral **alto** → se descarta menos: se conserva tejido, pero se cuelan artefactos al análisis.
-
-# %%
-#@title 🎚️ Umbral de artefacto
-
-
-def con_umbral(organo, aumento, umbral):
-    p = probabilidades(organo, aumento).astype(np.float32)
-    ref = referencia(organo, aumento)
-    umbrales = np.linspace(0.05, 0.95, 19)
-    perdido, colado = [], []
-    for u in umbrales:
-        art = p[:, 2] >= u
-        perdido.append((art & (ref == 1)).sum() / (ref == 1).sum())
-        colado.append((~art & (ref == 2)).sum() / (ref == 2).sum())
-    art = p[:, 2] >= umbral
-    pred = np.where(art, 2, p[:, :2].argmax(1))
-    plt.figure(figsize=(8, 3.8))
-    plt.plot(umbrales, 100 * np.array(perdido), "o-", color="#c2185b", label="tejido real descartado como artefacto")
-    plt.plot(umbrales, 100 * np.array(colado), "o-", color="#1976d2", label="artefacto real que se cuela como tejido/fondo")
-    plt.axvline(umbral, color="k", ls=":")
-    plt.xlabel("umbral de P(artefacto)"); plt.ylabel("% de píxeles"); plt.legend(); plt.grid(alpha=0.3)
-    plt.tight_layout(); plt.show()
-    print(f"Umbral {umbral:.2f}: Dice tejido = {dice(pred, ref, 1):.2f} · Dice artefacto = {dice(pred, ref, 2):.2f} · "
-          f"tejido descartado = {100 * (art & (ref == 1)).sum() / (ref == 1).sum():.1f} % · "
-          f"artefacto colado = {100 * (~art & (ref == 2)).sum() / (ref == 2).sum():.1f} %")
-
-
-w.interact(con_umbral,
-           organo=w.Dropdown(options=["colon", "gastrico"], description="Órgano"),
-           aumento=w.Dropdown(options=AUMENTOS, value="20x", description="Aumento"),
-           umbral=w.FloatSlider(value=0.5, min=0.05, max=0.95, step=0.05, description="Umbral", continuous_update=False));
-
-# %% [markdown]
-# ### ✍️ Decisión 3
-# El siguiente paso del flujo es **cuantificar células tumorales** en el tejido conservado.
-# ¿Qué error es más grave: descartar tejido o dejar pasar artefactos? Elige un umbral y justifícalo.
-#
-# _Umbral elegido y por qué:_
-#
 # ### Para llevarse
 # - El aumento se elige según el **tamaño de lo que hay que ver** y el **costo**: cada paso multiplica por 4 los píxeles.
 # - **Cómo se agrega** una métrica (por parche o agrupada) cambia el número: hay que decirlo al reportar.
 # - La validación **externa** (otro órgano, otro hospital, otro escáner) muestra dónde falla el modelo.
-# - El umbral traslada a números una **decisión del flujo clínico**.

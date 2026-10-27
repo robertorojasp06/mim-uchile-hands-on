@@ -97,8 +97,8 @@ nacimiento): se descartan todas las muestras que se superponen con él. La edad 
 (<65, 65–79, ≥80) y no se entregan fechas. Las CT se identifican solo por la estructura y los expertos como
 "Experto 1/2". Los nombres de archivo de los parches (con identificadores de ROI) y de las predicciones de
 nnU-Net (UID DICOM) se reemplazan. De la lámina de 5B se exporta solo la mitad izquierda del vidrio: la derecha tiene
-anotaciones a mano que podrían ser un número de caso. Por la misma razón, la figura introductoria de 4A
-(`notebooks/img/S4A_lamina_colon.jpg`, otra lámina de colon) muestra solo la parte superior del vidrio. Nunca se leen
+anotaciones a mano que podrían ser un número de caso. Por la misma razón, las figuras de 4A
+(`notebooks/img/S4A_lamina_*.jpg`, otra lámina de colon) muestran solo la parte superior del vidrio. Nunca se leen
 las imágenes asociadas (macro, etiqueta).
 
 ## Regenerar todo
@@ -110,6 +110,7 @@ python prep/export_wsi.py                                      # data/wsi     (r
 <venv-medsam>/bin/python prep/export_medsam.py                 # data/medsam  (torch==2.5.1, transformers==4.46.3, nibabel)
 <deeppath>/.venv/bin/python prep/export_slide.py               # data/lamina  (requiere openslide)
 <deeppath>/.venv/bin/python prep/export_intro_figure.py       # notebooks/img/S4A_lamina_colon.jpg (figura de 4A)
+<deeppath>/.venv/bin/python prep/export_segmented_figure.py   # notebooks/img/S4A_lamina_segmentada.jpg (figura de 4A)
 python prep/export_finetune.py                                 # data/ajuste  (entrena las curvas de referencia, ~10 min)
 python prep/export_gallery.py                                  # data/galeria (requiere ~/nnunet-final-predictions)
 python prep/package_data.py                                    # dist/*.zip
@@ -138,13 +139,12 @@ Valores obtenidos al ejecutar los notebooks con los parámetros por defecto (CPU
 - El Dice **promedio por parche** (0,62–0,80) es mucho más bajo que el **agrupado** (0,87–0,96): los parches con
   muy pocos píxeles de una clase arrastran el promedio. Buena discusión sobre cómo reportar.
 - Paso 3c: una lámina de 15 × 20 mm son ~4.100 parches a 10x (~6 min en CPU) y ~65.000 a 40x (~1,5 h): 16×.
+- Paso 3d (figura): en la lámina segmentada a 10x, el área de burbujas bajo el cubreobjetos sale como una mezcla
+  granulada de tejido y artefacto; el borde del portaobjetos y la sombra salen como artefacto.
 - Decisión 1 esperada: control de calidad a **10x** (mismo Dice, 16× más barato); mitosis a **40x**, pero solo
   dentro del tejido que dejó la máscara de 10x (flujo multiescala, que se retoma en 5B).
 - Validación externa en gástrico: el tejido se mantiene, pero el artefacto baja (0,92 → 0,79 a 40x);
   peor en **desenfoque (−0,26)**, **burbujas (−0,22)** y **sombras (−0,14)**.
-- Umbral de artefacto (20x): bajar de 0,5 a 0,2 reduce el artefacto colado (colon 24 % → 12 %; gástrico
-  27 % → 13 %) a costa de descartar algo más de tejido (~0,1–0,2 % → 0,8 %). Además **sube el Dice** de ambas
-  clases (colon: artefacto 0,86 → 0,92): el umbral 0,5 no es el óptimo.
 - En el Paso 2, el parche por defecto (burbujas de aire) muestra Dice tejido = 0,00: el experto no anotó tejido
   y la red predice algunos píxeles de tejido. Es un buen ejemplo de por qué el Dice por parche es inestable.
 
