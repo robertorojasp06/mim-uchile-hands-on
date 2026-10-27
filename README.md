@@ -1,7 +1,7 @@
 # Hands-on · Procesamiento de Imágenes y Bioseñales II (MIM, U. de Chile, 2026)
 
-Actividades prácticas en Google Colab para las **Sesiones 4 y 5** (Clases 1 y 3, *Deep learning para apoyo
-diagnóstico*). Todas corren **solo con CPU**, son en español y usan **datos locales anonimizados** (todos los estudiantes
+Actividades prácticas en Google Colab para las **Sesiones 4 y 5** del programa (unidades 2 y 3; diapositivas
+"Clases 1 y 3 — Deep learning para apoyo diagnóstico"). Todas corren **solo con CPU**, son en español y usan **datos locales anonimizados** (todos los estudiantes
 usan exactamente el mismo conjunto en cada actividad).
 
 | Actividad | Notebook | Duración | Cómputo | Datos | Diapositivas relacionadas |
@@ -32,18 +32,43 @@ donde el estudiante escribe su elección usando la terminología técnica.
    `CLAVE_DATOS` de la primera celda. Con la clave vacía o incorrecta, la celda avisa en español.
    Para actualizar los datos: regenerar los zips (`python prep/package_data.py`) y reemplazar los archivos en
    la carpeta de sasiba **con el mismo nombre**; el enlace y la clave no cambian.
-3. **Abrir en Colab.** Si el repositorio está en GitHub:
-   `https://colab.research.google.com/github/<usuario>/<repo>/blob/main/notebooks/<notebook>.ipynb`.
+3. **Abrir en Colab.** El repositorio es **privado**, así que el enlace directo
+   `https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/<notebook>.ipynb`
+   solo funciona para cuentas con acceso al repositorio (ver [Probar una actividad](#probar-una-actividad-equipo-docente)).
+   ⚠️ **Pendiente para los estudiantes:** hacer público el repositorio (no contiene datos ni la clave) o
+   compartirles los `.ipynb` por otra vía (p. ej., una carpeta de Google Drive).
    Los estudiantes deben usar **Archivo → Guardar una copia en Drive** para escribir sus respuestas.
 
-Ninguna actividad instala paquetes: usan lo que ya trae Colab (numpy, pandas, scipy, scikit-learn,
-PyTorch, matplotlib, ipywidgets, Pillow).
+Ninguna actividad instala paquetes: usan lo que ya trae Colab (numpy, pandas, pyarrow, scipy, scikit-learn,
+scikit-image, PyTorch, matplotlib, ipywidgets, Pillow).
+
+## Probar una actividad (equipo docente)
+
+En Colab, con una cuenta de Google y acceso de lectura al repositorio en GitHub:
+
+1. Abrir <https://colab.research.google.com> → **Archivo → Abrir cuaderno** → pestaña **GitHub**.
+   Marcar **Incluir repositorios privados** y autorizar a Colab en GitHub (solo la primera vez).
+2. Buscar `robertorojasp06/mim-uchile-hands-on`, rama `main`, y elegir el notebook (p. ej.
+   `notebooks/S4A_unet_patologia.ipynb`).
+3. **Archivo → Guardar una copia en Drive** (así se puede escribir en las celdas ✍️ y se conservan los cambios).
+4. Dejar el entorno en CPU: **Entorno de ejecución → Cambiar tipo de entorno → CPU**.
+5. En la primera celda (⚙️ *Preparar el entorno*), escribir la clave de los datos en `CLAVE_DATOS` y ejecutarla.
+6. Ejecutar las celdas **en orden** (▶ o Mayús + Enter) y comparar con la
+   [guía para docentes](#guía-para-docentes-qué-deberían-encontrar).
+
+Prueba rápida sin Colab (en un computador con los datos en `data/`):
+
+```bash
+cd notebooks
+python ../prep/smoke_test.py src/S4A_unet_patologia.py   # ejecuta todas las celdas; figuras en smoke_test_figs/
+```
+
 
 ## Datos
 
 | Conjunto | Origen | Contenido | Tamaño |
 |---|---|---|---|
-| `holter` | 24 Holter de 24 h (ITMed, filtrados en Spacelabs Pathfinder y validados por expertos) | `records.csv`, `windows.npz` (24.087 latidos N/S/V, ventanas de 4 s, 128 Hz, mV), `features.parquet` (7 características por latido) | 35 MB |
+| `holter` | 24 Holter de 24 h (ITMed, filtrados en Spacelabs Pathfinder y validados por expertos) | `records.csv`, `windows.npz` (24.087 latidos N/S/V, ventanas de 4 s, 128 Hz, mV), `features.parquet` (7 características por latido), `pacientes.npz` (histograma por paciente de las probabilidades por latido, para 5-s1) | 35 MB |
 | `wsi` | Proyecto DeepPath (SCIAN-Lab): parches H&E de 300 × 300 de colon y gástrico, del *split* de prueba | 225 parches + máscaras (fondo/tejido/artefacto) a 10x, 20x y 40x; U-Nets de colon a 10x, 20x y 40x | 25 MB |
 | `ct` | HCUCH: 4 estudios PET-CT segmentados por **dos radiólogos** de forma independiente | 8 cortes axiales (HU) por estructura con ambas máscaras, y métricas 3D | 0,8 MB |
 | `medsam` | Mismas CT que `ct`; MedSAM (`wanglab/medsam-vit-base`, Apache-2.0) | Masa pulmonar (27 cortes) y lesión hepática (14 cortes) con ambas máscaras; *embeddings* de MedSAM precalculados; decodificador en TorchScript | 95 MB |
@@ -79,6 +104,8 @@ python prep/package_data.py                                    # dist/*.zip
 python prep/build_notebooks.py                                 # notebooks/*.ipynb desde notebooks/src/*.py
 ```
 
+Para revisar un notebook sin Colab, ver `prep/smoke_test.py` (sección *Probar una actividad*).
+
 Los notebooks se editan en `notebooks/src/*.py` (formato *percent*: `# %%` celda de código,
 `# %% [markdown]` celda de texto) y se generan con `build_notebooks.py`. Las celdas que empiezan con
 `#@title` quedan como formularios de Colab con el código oculto.
@@ -95,8 +122,11 @@ Valores obtenidos al ejecutar los notebooks con los parámetros por defecto (CPU
 - Costo: una lámina de 15 × 20 mm son ~4.000 parches a 10x y ~63.000 a 40x (16×).
 - Validación externa en gástrico: el tejido se mantiene, pero el artefacto baja (0,92 → 0,79 a 40x);
   peor en **desenfoque (−0,26)**, **burbujas (−0,22)** y **sombras (−0,14)**.
-- Umbral de artefacto: bajar de 0,5 a 0,2 reduce el artefacto colado (24 % → 13 % en gástrico) a costa de
-  descartar algo más de tejido (0,2 % → 0,8 %).
+- Umbral de artefacto (20x): bajar de 0,5 a 0,2 reduce el artefacto colado (colon 24 % → 12 %; gástrico
+  27 % → 13 %) a costa de descartar algo más de tejido (~0,1–0,2 % → 0,8 %). Además **sube el Dice** de ambas
+  clases (colon: artefacto 0,86 → 0,92): el umbral 0,5 no es el óptimo.
+- En el Paso 2, el parche por defecto (burbujas de aire) muestra Dice tejido = 0,00: el experto no anotó tejido
+  y la red predice algunos píxeles de tejido. Es un buen ejemplo de por qué el Dice por parche es inestable.
 
 **4B · CNN 1D** (15 épocas, ventana de 1,5 s; sensibilidad por clase en los 6 pacientes de prueba)
 
