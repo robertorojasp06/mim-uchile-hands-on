@@ -6,7 +6,7 @@ usan exactamente el mismo conjunto en cada actividad).
 
 | Actividad | Abrir | Notebook | Duración | Cómputo | Datos | Diapositivas relacionadas |
 |---|---|---|---|---|---|---|
-| **4A** · U-Net preentrenada en patología digital | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4A_unet_patologia.ipynb) | [`S4A_unet_patologia.ipynb`](notebooks/S4A_unet_patologia.ipynb) | 25 min | CPU (~1 min de inferencia) | `wsi` | 17–18, 25, 31, 37 |
+| **4A** · U-Net preentrenada en patología digital | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4A_unet_patologia.ipynb) | [`S4A_unet_patologia.ipynb`](notebooks/S4A_unet_patologia.ipynb) | 25 min | CPU (~30 s de inferencia) | `wsi` | 17–18, 25, 31, 37 |
 | **4B** · Entrena una CNN 1D con latidos de Holter | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4B_cnn1d_ecg.ipynb) | [`S4B_cnn1d_ecg.ipynb`](notebooks/S4B_cnn1d_ecg.ipynb) | 25–30 min | CPU (~20–60 s por entrenamiento) | `holter` | 20, 24–27, 34–36 |
 | **4C** · El umbral es una decisión clínica | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4C_umbral_holter.ipynb) | [`S4C_umbral_holter.ipynb`](notebooks/S4C_umbral_holter.ipynb) | 20 min | CPU | `holter` | 8–13, 37–38 |
 | **4-s1** · La trampa del *accuracy* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4s1_trampa_accuracy.ipynb) | [`S4s1_trampa_accuracy.ipynb`](notebooks/S4s1_trampa_accuracy.ipynb) | 10 min | CPU | `holter` | 37 |
@@ -127,11 +127,19 @@ Los notebooks se editan en `notebooks/src/*.py` (formato *percent*: `# %%` celda
 Valores obtenidos al ejecutar los notebooks con los parámetros por defecto (CPU, semilla 0).
 
 **4A · U-Net en patología**
-- Matriz modelo × aumento (Dice agrupado): 0,85–0,96. El aumento importa **menos de lo esperado** para este
-  modelo; el mejor par es modelo 40x sobre datos 40x (tejido 0,96, artefacto 0,92).
-- El Dice **promedio por parche** (0,5–0,8) es mucho más bajo que el **agrupado** (0,85–0,96): los parches con
+- Paso 2: el panel de texto muestra las tres probabilidades del píxel elegido y su suma (= 1,000, por la softmax).
+  En el parche por defecto (burbujas de aire) la confianza baja (~0,35–0,5) en un **anillo en el borde de la
+  burbuja**, que es justo donde la predicción difiere de la anotación.
+- Paso 3a: con los tamaños típicos, el tejido, las burbujas, los pliegues y las criptas miden ≥ 60 px incluso a
+  10x; un núcleo mide ~8 px a 10x y ~31 px a 40x, y los cromosomas de una mitosis (~1,5 µm) solo llegan a ~7 px a 40x.
+- Paso 3b (cada modelo en su aumento, Dice agrupado): tejido 0,93 / 0,88 / 0,96 y artefacto 0,90 / 0,87 / 0,92 a
+  10x / 20x / 40x. El aumento **casi no cambia** la segmentación de tejido y artefacto; 20x incluso queda algo por
+  debajo (pliegues 0,47), y con 3 parches por región parte de eso es ruido.
+- El Dice **promedio por parche** (0,62–0,80) es mucho más bajo que el **agrupado** (0,87–0,96): los parches con
   muy pocos píxeles de una clase arrastran el promedio. Buena discusión sobre cómo reportar.
-- Costo: una lámina de 15 × 20 mm son ~4.000 parches a 10x y ~63.000 a 40x (16×).
+- Paso 3c: una lámina de 15 × 20 mm son ~4.100 parches a 10x (~6 min en CPU) y ~65.000 a 40x (~1,5 h): 16×.
+- Decisión 1 esperada: control de calidad a **10x** (mismo Dice, 16× más barato); mitosis a **40x**, pero solo
+  dentro del tejido que dejó la máscara de 10x (flujo multiescala, que se retoma en 5B).
 - Validación externa en gástrico: el tejido se mantiene, pero el artefacto baja (0,92 → 0,79 a 40x);
   peor en **desenfoque (−0,26)**, **burbujas (−0,22)** y **sombras (−0,14)**.
 - Umbral de artefacto (20x): bajar de 0,5 a 0,2 reduce el artefacto colado (colon 24 % → 12 %; gástrico
