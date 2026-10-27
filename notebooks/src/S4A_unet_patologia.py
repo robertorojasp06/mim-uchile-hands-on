@@ -7,6 +7,15 @@
 # y **dónde hay artefactos** (burbujas, tinta, pliegues, desenfoque, marcas de lápiz…). Una **U-Net** pequeña
 # hace esa segmentación en tres clases: **fondo**, **tejido** y **artefacto**.
 #
+# ![Lámina completa de colon con sus artefactos](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4A_lamina_colon.jpg)
+#
+# Así se ve una lámina completa de colon teñida con H&E. Casi todo el vidrio es **fondo**, y el **tejido** son
+# varios cortes del mismo bloque. También hay **artefactos** del montaje y del escaneo: aire atrapado bajo el
+# cubreobjetos, el borde del portaobjetos y una sombra en el extremo del vidrio. La parte inferior de la lámina se
+# recortó porque tiene anotaciones escritas a mano (otro artefacto: **marcas de lápiz**) que podrían identificar el caso.
+# Una lámina así pesa unos 22 gigapíxeles a 40x, mientras que la U-Net solo ve parches de 300 × 300 píxeles (panel c).
+# Por eso la lámina se recorre por parches, y por eso importa a qué aumento se trabaja.
+#
 # Tenemos tres versiones del modelo, entrenadas **solo con colon** a tres aumentos (10x, 20x y 40x),
 # con parches de 300 × 300 píxeles. Los parches de este notebook **no** se usaron para entrenar.
 #

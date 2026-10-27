@@ -96,8 +96,10 @@ es **por paciente** (14/4/6).
 nacimiento): se descartan todas las muestras que se superponen con él. La edad se entrega en tramos
 (<65, 65–79, ≥80) y no se entregan fechas. Las CT se identifican solo por la estructura y los expertos como
 "Experto 1/2". Los nombres de archivo de los parches (con identificadores de ROI) y de las predicciones de
-nnU-Net (UID DICOM) se reemplazan. De la lámina se exporta solo la mitad izquierda del vidrio: la derecha tiene
-anotaciones a mano que podrían ser un número de caso; nunca se leen las imágenes asociadas (macro, etiqueta).
+nnU-Net (UID DICOM) se reemplazan. De la lámina de 5B se exporta solo la mitad izquierda del vidrio: la derecha tiene
+anotaciones a mano que podrían ser un número de caso. Por la misma razón, la figura introductoria de 4A
+(`notebooks/img/S4A_lamina_colon.jpg`, otra lámina de colon) muestra solo la parte superior del vidrio. Nunca se leen
+las imágenes asociadas (macro, etiqueta).
 
 ## Regenerar todo
 
@@ -107,6 +109,7 @@ python prep/export_wsi.py                                      # data/wsi     (r
 ~/anaconda3/envs/nnunet/bin/python prep/export_ct.py           # data/ct      (requiere nibabel y el disco "Nuevo vol2")
 <venv-medsam>/bin/python prep/export_medsam.py                 # data/medsam  (torch==2.5.1, transformers==4.46.3, nibabel)
 <deeppath>/.venv/bin/python prep/export_slide.py               # data/lamina  (requiere openslide)
+<deeppath>/.venv/bin/python prep/export_intro_figure.py       # notebooks/img/S4A_lamina_colon.jpg (figura de 4A)
 python prep/export_finetune.py                                 # data/ajuste  (entrena las curvas de referencia, ~10 min)
 python prep/export_gallery.py                                  # data/galeria (requiere ~/nnunet-final-predictions)
 python prep/package_data.py                                    # dist/*.zip
