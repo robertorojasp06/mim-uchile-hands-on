@@ -47,11 +47,11 @@ Texto listo para copiar en U-Cursos, el chat de la clase o una diapositiva (camb
 > 1. Abre el enlace de la actividad (por ejemplo, la actividad 4A:
 >    <https://colab.research.google.com/github/robertorojasp06/mim-uchile-hands-on/blob/main/notebooks/S4A_unet_patologia.ipynb>)
 >    e inicia sesión con tu cuenta de Google.
-> 2. Haz clic en **Archivo → Guardar una copia en Drive**. Trabaja siempre en esa copia: ahí quedan tus respuestas.
+> 2. Haz clic en **Archivo → Guardar una copia en Drive** (*File → Save a copy in Drive*). Trabaja siempre en esa copia: ahí quedan tus respuestas.
 > 3. En la primera celda (⚙️ *Preparar el entorno*), escribe la **clave de los datos** que entregamos en clase en
 >    el campo `CLAVE_DATOS`.
 > 4. Ejecuta las celdas **en orden**, de arriba hacia abajo (▶ a la izquierda de cada celda, o Mayús + Enter).
->    Si Colab avisa que el notebook no fue creado por Google, elige **Ejecutar de todos modos**.
+>    Si Colab avisa que el notebook no fue creado por Google, elige **Ejecutar de todos modos** (*Run anyway*).
 > 5. Responde en las celdas ✍️ (doble clic para editar).
 
 No se necesita GPU: si Colab ofrece una, no hace falta cambiar el tipo de entorno.
@@ -59,8 +59,9 @@ No se necesita GPU: si Colab ofrece una, no hace falta cambiar el tipo de entorn
 ## Probar una actividad (equipo docente)
 
 1. Abrir el notebook con su botón *Open in Colab* (tabla de arriba).
-2. **Archivo → Guardar una copia en Drive**.
-3. Usar CPU, como los estudiantes: **Entorno de ejecución → Cambiar tipo de entorno de ejecución → CPU**.
+2. **Archivo → Guardar una copia en Drive** (*File → Save a copy in Drive*).
+3. Usar CPU, como los estudiantes: **Entorno de ejecución → Cambiar tipo de entorno de ejecución → CPU**
+   (*Runtime → Change runtime type → Hardware accelerator: CPU → Save*).
 4. Escribir la clave en `CLAVE_DATOS` (primera celda) y ejecutar las celdas **en orden**.
 5. Comparar con la [guía para docentes](#guía-para-docentes-qué-deberían-encontrar).
 
