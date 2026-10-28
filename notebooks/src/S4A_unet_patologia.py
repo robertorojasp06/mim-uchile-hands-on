@@ -279,9 +279,34 @@ w.interact(misma_zona,
 
 # %% [markdown]
 # **3b.** ¿Cambia la calidad de la segmentación de tejido y artefacto? Corremos cada modelo sobre los parches de
-# colon de su aumento (~30 s en CPU). El Dice de cada clase se calcula de dos formas:
-# - **agrupado**: se suman los píxeles de todos los parches y se calcula un solo Dice;
-# - **promedio por parche**: se calcula un Dice por parche y se promedia.
+# colon de su aumento (~30 s en CPU).
+#
+# **Cómo se calcula el Dice con 3 clases.** Se calcula **una clase a la vez**, como si fuera un problema binario
+# (esa clase contra el resto). Para la clase *c*, sea **A** el conjunto de píxeles que la red predijo como *c* y
+# **B** el de píxeles que el experto anotó como *c*:
+#
+# $$\text{Dice}_c = \frac{2\,|A \cap B|}{|A| + |B|}$$
+#
+# Vale 1 si coinciden exactamente y 0 si no se tocan. Reportamos el Dice de **tejido** y el de **artefacto**; el
+# de fondo casi siempre es ~1 y no aporta.
+#
+# Con muchos parches hay dos formas de juntar el resultado:
+# - **Agrupado**: se juntan los píxeles de todos los parches, como si fueran una sola imagen grande, y se calcula
+#   un solo Dice. Cada **píxel** pesa lo mismo.
+# - **Promedio por parche**: se calcula un Dice en cada parche y se promedian. Cada **parche** pesa lo mismo, tenga
+#   mucho o poco de esa clase. Los parches donde la clase no aparece ni en la anotación ni en la predicción
+#   (Dice indefinido) no entran al promedio.
+#
+# Ejemplo con dos parches y la clase artefacto:
+#
+# | | artefacto anotado | artefacto predicho | aciertos | Dice del parche |
+# |---|---|---|---|---|
+# | Parche 1 (una burbuja grande) | 40.000 px | 40.000 px | 36.000 px | 0,90 |
+# | Parche 2 (un borde de 200 px) | 200 px | 200 px | 20 px | 0,10 |
+#
+# **Promedio por parche** = (0,90 + 0,10) / 2 = **0,50**.
+# **Agrupado** = 2 × (36.000 + 20) / (40.200 + 40.200) = **0,90**.
+# Un error en 200 píxeles hunde el promedio por parche, pero casi no mueve el agrupado.
 
 # %%
 #@title 🧮 Dice a cada aumento
@@ -297,8 +322,12 @@ for aum in AUMENTOS:
         por_region.append({"categoría": g.categoria.iloc[0], "región": region, "aumento": aum,
                            "Dice": dice(pred[g.index], ref[g.index], c)})
 
+print("Todos los parches de colon de cada aumento (39):")
 display(pd.DataFrame(filas).pivot(index="clase", columns="aumento").round(2))
-print("Dice de cada región en su propia clase (solo 3 parches por región: diferencias de ±0,1 pueden ser ruido):")
+print("Dice agrupado de cada región, sobre sus 3 parches y solo en la clase de esa región\n"
+      "(regiones de tejido → Dice de tejido; regiones de artefacto → Dice de artefacto).\n"
+      "Ojo: los parches de cada aumento son distintos (se sortearon por separado) y son solo 3 por región,\n"
+      "así que una diferencia entre aumentos puede deberse a qué parches tocaron y no al aumento.")
 display(pd.DataFrame(por_region).pivot_table(index=["categoría", "región"], columns="aumento", values="Dice")
         .style.background_gradient(cmap="Greens", vmin=0.4, vmax=1).format("{:.2f}"))
 

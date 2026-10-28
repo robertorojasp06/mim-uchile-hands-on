@@ -135,8 +135,12 @@ Valores obtenidos al ejecutar los notebooks con los parámetros por defecto (CPU
 - Paso 3a: con los tamaños típicos, el tejido, las burbujas, los pliegues y las criptas miden ≥ 60 px incluso a
   10x; un núcleo mide ~8 px a 10x y ~31 px a 40x, y los cromosomas de una mitosis (~1,5 µm) solo llegan a ~7 px a 40x.
 - Paso 3b (cada modelo en su aumento, Dice agrupado): tejido 0,93 / 0,88 / 0,96 y artefacto 0,90 / 0,87 / 0,92 a
-  10x / 20x / 40x. El aumento **casi no cambia** la segmentación de tejido y artefacto; 20x incluso queda algo por
-  debajo (pliegues 0,47), y con 3 parches por región parte de eso es ruido.
+  10x / 20x / 40x. El aumento **casi no cambia** la segmentación de tejido y artefacto.
+- Tabla por región (Dice agrupado de los 3 parches, en la clase de la región): pliegues a 20x da 0,47. No es un
+  efecto del aumento, sino de qué parches se sortearon: a 20x son casi enteros de pliegue (67–83 % anotado como
+  artefacto) y la red marca gran parte como tejido; en uno (pliegues_tejido #1, tejido con células claras) predice
+  todo tejido y su Dice es 0. A 10x los parches de pliegue son sobre todo tejido (9–17 % de artefacto). Los parches
+  de cada aumento son distintos, así que esta tabla no compara las mismas zonas.
 - El Dice **promedio por parche** (0,62–0,80) es mucho más bajo que el **agrupado** (0,87–0,96): los parches con
   muy pocos píxeles de una clase arrastran el promedio. Buena discusión sobre cómo reportar.
 - Paso 3c: una lámina de 15 × 20 mm son ~4.100 parches a 10x (~6 min en CPU) y ~65.000 a 40x (~1,5 h): 16×.
