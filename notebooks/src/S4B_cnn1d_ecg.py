@@ -134,6 +134,10 @@ for fila, c in enumerate(CLASES):
 for eje in ejes[-1]:
     eje.set_xlabel("tiempo desde el pico R (s)")
 plt.tight_layout(); plt.show()
+if "latidos_pos" not in datos.files:
+    print("⚠️ Estos datos son de una versión anterior y no traen la clase de los latidos vecinos: solo se marca el "
+          "latido central.\n   Para verlos, ve a Entorno de ejecución → Desconectar y borrar el entorno de ejecución "
+          "(Runtime → Disconnect and delete runtime) y vuelve a ejecutar desde el principio.")
 
 # %% [markdown]
 # ### ✍️ Pregunta 1
