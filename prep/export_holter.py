@@ -4,7 +4,8 @@ Reads the ITMed/Pathfinder records (ISHNE .ecg + *_beats.csv + *_metadata.json),
 and writes to data/holter/:
 
 - records.csv        one row per record: new ID, group, split, age band, sex, recorder, counts
-- windows.npz        4-s ECG windows (channel 1, mV, float16) centred on N/S/V beats, for 4B
+- windows.npz        4-s ECG windows (channel 1, mV, float16) centred on N/S/V beats, for 4B, with the
+                     position (samples from the centre R peak) and code of every annotated beat in each window
 - features.parquet   hand-crafted beat features for 4C/4-s1:
                      train/val records -> sampled beats; test records -> every beat (24 h)
 - pacientes.npz      per-patient histogram of out-of-fold beat scores (all 24 records), for 5-s1
@@ -52,6 +53,7 @@ FEATURES = ["rr_prev_ms", "rr_next_ms", "prematuridad", "pausa_compensatoria",
             "ancho_qrs_ms", "amplitud_relativa", "correlacion_plantilla"]
 WIN_PRE, WIN_POST = 320, 192   # 4-s window (2.5 s before, 1.5 s after the R peak) at 128 Hz, for 4B
 CAP_WINDOWS = 600        # max windows per class and record (4B)
+MAX_BEATS = 16           # max annotated beats stored per 4-s window (4B)
 CAP_FEATURES = 4000      # max beats per class and record in train/val (4C)
 SEED = 0
 
@@ -157,7 +159,7 @@ def main():
     pd.DataFrame({"original": list(new_id), "id": list(new_id.values())}).to_csv(
         REPO / "prep" / "private" / "holter_id_map.csv", index=False)
 
-    rows, win_x, win_y, win_rec, feats, all_nsv = [], [], [], [], [], []
+    rows, win_x, win_y, win_rec, win_bt, win_bc, feats, all_nsv = [], [], [], [], [], [], [], []
     for rec in sorted(RECORDS, key=new_id.get):
         group, split = RECORDS[rec]
         rid = new_id[rec]
@@ -190,6 +192,16 @@ def main():
         win_x.append(y[idx[:, None] + np.arange(-WIN_PRE, WIN_POST)].astype(np.float16))
         win_y.append(w.code.to_numpy())
         win_rec.append(np.full(len(w), rid))
+        all_idx, all_code = beats.sample_index.to_numpy(), beats.code.to_numpy().astype("U1")
+        bt = np.full((len(idx), MAX_BEATS), np.iinfo(np.int16).min, np.int16)
+        bc = np.full((len(idx), MAX_BEATS), "", "U1")
+        lo, hi = np.searchsorted(all_idx, idx - WIN_PRE), np.searchsorted(all_idx, idx + WIN_POST)
+        for k, (a, b) in enumerate(zip(lo, hi)):
+            n = min(b - a, MAX_BEATS)
+            bt[k, :n] = all_idx[a:a + n] - idx[k]
+            bc[k, :n] = all_code[a:a + n]
+        win_bt.append(bt)
+        win_bc.append(bc)
 
         age = int(meta["StartTime"][:4]) - int(meta["DateOfBirth"][:4])
         band = "<65" if age < 65 else ("65-79" if age < 80 else ">=80")
@@ -214,7 +226,8 @@ def main():
     feats.drop(columns="sample_index").to_parquet(args.out / "features.parquet", index=False)
 
     np.savez_compressed(args.out / "windows.npz", x=np.concatenate(win_x),
-                        y=np.concatenate(win_y).astype("U1"), record=np.concatenate(win_rec).astype("U3"), fs=128, pre=WIN_PRE)
+                        y=np.concatenate(win_y).astype("U1"), record=np.concatenate(win_rec).astype("U3"), fs=128, pre=WIN_PRE,
+                        latidos_pos=np.concatenate(win_bt), latidos_clase=np.concatenate(win_bc))
     patient_scores(pd.concat(all_nsv, ignore_index=True), records, args.out)
     print("features:", feats.groupby(["split", "code"]).size().to_dict())
     print("windows:", sum(len(v) for v in win_y))

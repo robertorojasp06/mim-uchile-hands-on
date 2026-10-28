@@ -77,7 +77,7 @@ python ../prep/smoke_test.py src/S4A_unet_patologia.py   # ejecuta todas las cel
 
 | Conjunto | Origen | Contenido | Tamaño |
 |---|---|---|---|
-| `holter` | 24 Holter de 24 h (ITMed, filtrados en Spacelabs Pathfinder y validados por expertos) | `records.csv`, `windows.npz` (24.087 latidos N/S/V, ventanas de 4 s, 128 Hz, mV), `features.parquet` (7 características por latido), `pacientes.npz` (histograma por paciente de las probabilidades por latido, para 5-s1) | 35 MB |
+| `holter` | 24 Holter de 24 h (ITMed, filtrados en Spacelabs Pathfinder y validados por expertos) | `records.csv`, `windows.npz` (24.087 latidos N/S/V, ventanas de 4 s, 128 Hz, mV, con la posición y clase de todos los latidos anotados en cada ventana), `features.parquet` (7 características por latido), `pacientes.npz` (histograma por paciente de las probabilidades por latido, para 5-s1) | 35 MB |
 | `wsi` | Proyecto DeepPath (SCIAN-Lab): parches H&E de 300 × 300 de colon y gástrico, del *split* de prueba | 225 parches + máscaras (fondo/tejido/artefacto) a 10x, 20x y 40x; U-Nets de colon a 10x, 20x y 40x | 25 MB |
 | `ct` | HCUCH: 4 estudios PET-CT segmentados por **dos radiólogos** de forma independiente | 8 cortes axiales (HU) por estructura con ambas máscaras, y métricas 3D | 0,8 MB |
 | `medsam` | Mismas CT que `ct`; MedSAM (`wanglab/medsam-vit-base`, Apache-2.0) | Masa pulmonar (27 cortes) y lesión hepática (14 cortes) con ambas máscaras; *embeddings* de MedSAM precalculados; decodificador en TorchScript | 95 MB |
@@ -112,7 +112,7 @@ python prep/export_wsi.py                                      # data/wsi     (r
 <deeppath>/.venv/bin/python prep/export_intro_figure.py       # notebooks/img/S4A_lamina_colon.jpg (figura de 4A)
 <deeppath>/.venv/bin/python prep/export_segmented_figure.py   # notebooks/img/S4A_lamina_segmentada.jpg (figura de 4A)
 python prep/export_unet_diagram.py                            # notebooks/img/S4A_unet300.png (diagrama de 4A)
-python prep/export_ecg_figure.py                              # notebooks/img/S4B_holter_segmento.png (figura de 4B)
+python prep/export_ecg_figure.py                              # notebooks/img/S4B_latido.png y S4B_holter_segmento.png (figuras de 4B)
 python prep/export_finetune.py                                 # data/ajuste  (entrena las curvas de referencia, ~10 min)
 python prep/export_gallery.py                                  # data/galeria (requiere ~/nnunet-final-predictions)
 python prep/package_data.py                                    # dist/*.zip

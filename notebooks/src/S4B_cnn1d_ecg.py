@@ -9,14 +9,28 @@
 # **N** (normal), **S** (extrasístole supraventricular) o **V** (extrasístole ventricular).
 # Nadie le dice qué mirar: las características las extrae la red.
 #
+# **¿Qué es un latido en el ECG?** Cada latido deja una secuencia de ondas:
+#
+# ![Un latido normal con sus ondas P, Q, R, S y T y los intervalos PR, QRS y QT](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4B_latido.png)
+#
+# - **P**: las aurículas se activan (despolarizan).
+# - **QRS**: los ventrículos se activan. Es la parte más alta y rápida; su punto más alto es el **pico R**, que
+#   marca la posición de cada latido en las anotaciones.
+# - **T**: los ventrículos se recuperan (repolarizan).
+# - Intervalos: **PR** (de la aurícula al ventrículo, normal 120–200 ms), **QRS** (normal < 120 ms) y **QT**.
+#   Entre dos latidos seguidos se mide el **intervalo RR**, que da la frecuencia cardiaca.
+#
+# A 128 Hz hay una muestra cada 7,8 ms, así que este QRS de ~80 ms ocupa unas 10 muestras.
+#
 # ![Diez segundos de un Holter de 3 canales con sus latidos anotados](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4B_holter_segmento.png)
 #
 # Así se ven los datos: 10 s de un Holter de 24 h con 3 canales (derivaciones), muestreado a 128 Hz. Cada latido
 # está anotado en su pico R con su clase. Fíjate en las diferencias:
 # - **S**: llega **antes de tiempo** (intervalo RR de 0,68 o 0,64 s, cuando lo habitual aquí es ~0,85 s), pero su
-#   complejo QRS es angosto y se parece a uno normal.
+#   complejo QRS es angosto y se parece a uno normal: el impulso nace sobre los ventrículos y los recorre por el
+#   camino habitual.
 # - **V**: también es prematuro, pero su QRS es **ancho y de forma distinta** (muy claro en los canales 2 y 3), y
-#   le sigue una pausa más larga (0,94 s).
+#   le sigue una pausa más larga (0,94 s): el impulso nace en el ventrículo y lo recorre por un camino anormal.
 #
 # La red no ve los 10 s ni los 3 canales: recibe una **ventana corta alrededor de cada latido** del **canal 1**
 # (por defecto 1,5 s: 1 s antes y 0,5 s después del pico R) y debe decir si ese latido es N, S o V.
@@ -63,7 +77,9 @@ print(f"Dispositivo: {DISPOSITIVO}")
 
 # %% [markdown]
 # ## Paso 1 · Mira los latidos
-# Cada ejemplo es una ventana de ECG centrada en el latido (línea punteada).
+# Cada ejemplo es una ventana de 4 s del canal 1 centrada en un latido, marcado con la **línea punteada**: esa es la
+# clase que la red debe predecir. Sobre la señal aparece la clase de **todos** los latidos anotados en la ventana
+# (X = ruido o artefacto, U = no clasificable), para que veas en qué contexto llega cada uno.
 
 # %%
 #@title 👀 Ejemplos de cada clase
@@ -76,6 +92,13 @@ for fila, c in enumerate(CLASES):
         eje.axvline(0, color="k", ls=":", lw=0.8)
         eje.set_title(f"{c} · {NOMBRE[c]} · {paciente[i]}", fontsize=9)
         eje.set_yticks([])
+        if "latidos_pos" in datos.files:                    # clase de cada latido anotado en la ventana
+            bajo, alto = senal[i].min(), senal[i].max()
+            eje.set_ylim(bajo - 0.05 * (alto - bajo), alto + 0.3 * (alto - bajo))
+            for pos, clase in zip(datos["latidos_pos"][i], datos["latidos_clase"][i]):
+                if clase:
+                    eje.text(pos / FS, alto + 0.12 * (alto - bajo), clase, ha="center", fontsize=10,
+                             fontweight="bold" if pos == 0 else "normal", color=COLOR.get(clase, "#999999"))
 for eje in ejes[-1]:
     eje.set_xlabel("tiempo desde el pico R (s)")
 plt.tight_layout(); plt.show()
