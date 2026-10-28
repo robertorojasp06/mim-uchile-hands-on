@@ -9,6 +9,18 @@
 # **N** (normal), **S** (extrasístole supraventricular) o **V** (extrasístole ventricular).
 # Nadie le dice qué mirar: las características las extrae la red.
 #
+# ![Diez segundos de un Holter de 3 canales con sus latidos anotados](https://raw.githubusercontent.com/robertorojasp06/mim-uchile-hands-on/main/notebooks/img/S4B_holter_segmento.png)
+#
+# Así se ven los datos: 10 s de un Holter de 24 h con 3 canales (derivaciones), muestreado a 128 Hz. Cada latido
+# está anotado en su pico R con su clase. Fíjate en las diferencias:
+# - **S**: llega **antes de tiempo** (intervalo RR de 0,68 o 0,64 s, cuando lo habitual aquí es ~0,85 s), pero su
+#   complejo QRS es angosto y se parece a uno normal.
+# - **V**: también es prematuro, pero su QRS es **ancho y de forma distinta** (muy claro en los canales 2 y 3), y
+#   le sigue una pausa más larga (0,94 s).
+#
+# La red no ve los 10 s ni los 3 canales: recibe una **ventana corta alrededor de cada latido** del **canal 1**
+# (por defecto 1,5 s: 1 s antes y 0,5 s después del pico R) y debe decir si ese latido es N, S o V.
+#
 # Los 24 pacientes están separados **por paciente**: 14 para entrenar, 4 para validar y 6 para la prueba final.
 #
 # | Paso | Qué haces | Tiempo |

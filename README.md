@@ -112,6 +112,7 @@ python prep/export_wsi.py                                      # data/wsi     (r
 <deeppath>/.venv/bin/python prep/export_intro_figure.py       # notebooks/img/S4A_lamina_colon.jpg (figura de 4A)
 <deeppath>/.venv/bin/python prep/export_segmented_figure.py   # notebooks/img/S4A_lamina_segmentada.jpg (figura de 4A)
 python prep/export_unet_diagram.py                            # notebooks/img/S4A_unet300.png (diagrama de 4A)
+python prep/export_ecg_figure.py                              # notebooks/img/S4B_holter_segmento.png (figura de 4B)
 python prep/export_finetune.py                                 # data/ajuste  (entrena las curvas de referencia, ~10 min)
 python prep/export_gallery.py                                  # data/galeria (requiere ~/nnunet-final-predictions)
 python prep/package_data.py                                    # dist/*.zip
