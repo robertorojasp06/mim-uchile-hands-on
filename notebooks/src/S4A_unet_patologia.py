@@ -137,9 +137,10 @@ print("Cada parche mide 300 × 300 píxeles y lo que abarca depende del aumento:
 # <span style="color:#1976d2">**artefacto**</span> o fondo. Fíjate en la barra de escala: un parche a 10x
 # abarca 4 veces más ancho (16 veces más área) que uno a 40x.
 #
-# > 💡 **Recuerda:** los parches de cada aumento son **distintos**. Se cortaron en lugares distintos de las láminas;
-# > no son el mismo parche de 40x reducido a 20x y 10x. Por eso "burbujas_aire #0" a 10x y a 40x muestran
-# > burbujas diferentes.
+# > 💡 **Recuerda:** los parches de cada aumento son **distintos**: no son el mismo parche de 40x reducido a 20x y
+# > 10x. Todos salen de las mismas regiones anotadas por el experto, pero cada aumento se cortó por separado, en
+# > posiciones al azar. A veces dos parches se solapan en parte, pero en general muestran zonas distintas:
+# > "burbujas_aire #0" a 10x y a 40x son burbujas diferentes.
 
 # %%
 #@title 🔬 Galería
