@@ -136,6 +136,10 @@ print("Cada parche mide 300 × 300 píxeles y lo que abarca depende del aumento:
 # Cada parche tiene una **anotación** hecha por un experto: <span style="color:#c2185b">**tejido**</span>,
 # <span style="color:#1976d2">**artefacto**</span> o fondo. Fíjate en la barra de escala: un parche a 10x
 # abarca 4 veces más ancho (16 veces más área) que uno a 40x.
+#
+# > 💡 **Recuerda:** los parches de cada aumento son **distintos**. Se cortaron en lugares distintos de las láminas;
+# > no son el mismo parche de 40x reducido a 20x y 10x. Por eso "burbujas_aire #0" a 10x y a 40x muestran
+# > burbujas diferentes.
 
 # %%
 #@title 🔬 Galería
@@ -280,6 +284,9 @@ w.interact(misma_zona,
 # %% [markdown]
 # **3b.** ¿Cambia la calidad de la segmentación de tejido y artefacto? Corremos cada modelo sobre los parches de
 # colon de su aumento (~30 s en CPU).
+#
+# > 💡 **Recuerda:** a diferencia de la simulación de 3a, aquí los parches de cada aumento son **distintos** (no son
+# > versiones reducidas de los mismos parches de 40x). Al comparar aumentos comparamos también zonas distintas.
 #
 # **Cómo se calcula el Dice con 3 clases.** Se calcula **una clase a la vez**, como si fuera un problema binario
 # (esa clase contra el resto). Para la clase *c*, sea **A** el conjunto de píxeles que la red predijo como *c* y
