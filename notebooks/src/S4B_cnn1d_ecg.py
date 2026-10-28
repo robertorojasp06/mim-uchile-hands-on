@@ -76,6 +76,38 @@ display(conteo.loc[["train", "val", "test"]].rename(index={"train": "entrenamien
 print(f"Dispositivo: {DISPOSITIVO}")
 
 # %% [markdown]
+# **(Opcional)** Si quieres ver de qué paciente viene cada ventana, ejecuta la celda siguiente; si no, sáltala.
+
+# %%
+#@title 🔎 (Opcional) Ventanas por conjunto y paciente
+import ipywidgets as w
+
+NOMBRE_CONJUNTO = {"entrenamiento": "train", "validación": "val", "prueba": "test"}
+
+
+def ventanas_por_paciente(conjunto):
+    sub = pd.Series(datos["y"][grupo == NOMBRE_CONJUNTO[conjunto]], name="clase")
+    tabla = pd.crosstab(pd.Series(paciente[grupo == NOMBRE_CONJUNTO[conjunto]], name="paciente"), sub)
+    tabla = tabla.reindex(columns=CLASES, fill_value=0)
+    tabla.columns = [f"ventanas {c}" for c in CLASES]
+    tabla["ventanas total"] = tabla.sum(axis=1)
+    info = pacientes.loc[tabla.index]
+    for c in CLASES:
+        tabla[f"latidos {c} en el Holter"] = info[f"n_{c}"]
+    tabla.insert(0, "grupo", info["grupo"])
+    tabla.insert(1, "horas", info["horas"])
+    tabla.loc["total"] = ["", tabla["horas"].sum()] + tabla.iloc[:, 2:].sum().tolist()
+    formato = lambda v: (f"{v:,}".replace(",", ".") if isinstance(v, (int, np.integer)) else
+                         f"{v:.1f}".replace(".", ",") if isinstance(v, (float, np.floating)) else v)
+    display(tabla.style.format(formato))
+    print("Se tomaron hasta 600 ventanas por clase y paciente: los pacientes con miles de extrasístoles no dominan "
+          "el entrenamiento.")
+
+
+w.interact(ventanas_por_paciente,
+           conjunto=w.Dropdown(options=list(NOMBRE_CONJUNTO), value="entrenamiento", description="Conjunto"));
+
+# %% [markdown]
 # ## Paso 1 · Mira los latidos
 # Cada ejemplo es una ventana de 4 s del canal 1 centrada en un latido, marcado con la **línea punteada**: esa es la
 # clase que la red debe predecir. Sobre la señal aparece la clase de **todos** los latidos anotados en la ventana
